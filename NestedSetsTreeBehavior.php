@@ -1,6 +1,6 @@
 <?php
 
-namespace wokster\treebehavior;
+namespace dasturchiuz\treebehavior;
 
 use yii\base\Behavior;
 
@@ -23,14 +23,6 @@ class NestedSetsTreeBehavior extends Behavior
      */
     public $labelAttribute = 'name';
     /**
-	 * @var string
-	 */
-	public $key = 'category_id';
-	/**
-	 * @var string
-	 */
-	public $outKey = 'key';
-    /**
      * @var string
      */
     public $childrenOutAttribute = 'children';
@@ -51,12 +43,12 @@ class NestedSetsTreeBehavior extends Behavior
      */
     public $makeLinkCallable = null;
 
-    public function tree()
+    public function treeCategory()
     {
         $makeNode = function ($node) {
             $newData = [
-                $this->labelOutAttribute => $node[$this->labelAttribute],
-                $this->outKey => $node[$this->key],
+                $this->labelOutAttribute => $node['translation'][$this->labelAttribute],
+                'expanded' => true,
             ];
             if (is_callable($makeLink = $this->makeLinkCallable)) {
                 $newData += [
@@ -68,7 +60,8 @@ class NestedSetsTreeBehavior extends Behavior
 
         // Trees mapped
         $trees = array();
-        $collection = $this->owner->find()->orderBy($this->leftAttribute)->asArray()->all();
+        $collection = $this->owner->children()->with(['translation'])->asArray()->all();
+        //        $collection = $this->owner->find()->orderBy(['lft' => SORT_ASC, 'tree' => SORT_DESC])->with(['translation'])->asArray()->all();
 
         if (count($collection) > 0) {
             foreach ($collection as &$col) $col = $makeNode($col);
@@ -93,13 +86,39 @@ class NestedSetsTreeBehavior extends Behavior
                 if ($l == 0) {
                     // Assigning the root node
                     $i = count($trees);
-                    $trees[$i] = $item;
+                    $trees[$i] = [
+                        'id' =>  (int) $item['id'],
+                        'depth' => (int) $item['depth'],
+                        'name' => $item['translation']['name'],
+                        'description' => $item['translation']['description'],
+                        'config' => $item['config'],
+                        'cat_img' => $item['cat_img'],
+                        'status' => (int) $item['status'],
+                        'tree' => (int) $item['tree'],
+                        'lft' => (int) $item['lft'],
+                        'rgt' => (int) $item['rgt'],
+                        'depth' => (int) $item['depth'],
+                        'children' => $item['children'],
+                    ];
                     $stack[] = &$trees[$i];
                 } else {
                     // Add node to parent
                     $i = count($stack[$l - 1][$this->childrenOutAttribute]);
                     $stack[$l - 1][$this->hasChildrenOutAttribute] = true;
-                    $stack[$l - 1][$this->childrenOutAttribute][$i] = $item;
+                    $stack[$l - 1][$this->childrenOutAttribute][$i] = [
+                        'id' =>  (int) $item['id'],
+                        'depth' => (int) $item['depth'],
+                        'name' => $item['translation']['name'],
+                        'description' => $item['translation']['description'],
+                        'config' => $item['config'],
+                        'cat_img' => $item['cat_img'],
+                        'status' => (int) $item['status'],
+                        'tree' => (int) $item['tree'],
+                        'lft' => (int) $item['lft'],
+                        'rgt' => (int) $item['rgt'],
+                        'depth' => (int) $item['depth'],
+                        'children' => $item['children'],
+                    ];
                     $stack[] = &$stack[$l - 1][$this->childrenOutAttribute][$i];
                 }
             }
