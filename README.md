@@ -32,14 +32,14 @@ Usage
 Once the extension is installed, simply use it in your model  :
 
 ```php
-'htmlTree'=>[
+'htmlTreeCategory'=>[
     'class' => \dasturchiuz\treebehavior\NestedSetsTreeBehavior::className()
 ]
 ```
 use
 ```php
-SomeModel::findOne($id)->tree()
+SomeModel::findOne($id)->treeCategory()
 ```
-to get array for fancytree-widget
+to get arrays
 
 
