@@ -1,5 +1,5 @@
 {
-    "name": "wokster/yii2-nested-sets-tree-behavior",
+    "name": "dasturchiuz/yii2-nested-sets-tree-behavior",
     "description": "NestedSetsTreeBehavior for build array from creocoder nested sets behavior and fancytree widget",
     "type": "yii2-extension",
     "keywords": ["yii2","extension","creocoder","behavior","nested sets","array","fancytree"],
@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "wokster\\treebehavior\\": ""
+            "dasturchiuz\\treebehavior\\": ""
         }
     }
 }
