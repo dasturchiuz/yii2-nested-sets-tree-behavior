@@ -1,6 +1,6 @@
 {
     "name": "dasturchiuz/yii2-nested-sets-tree-behavior",
-    "description": "NestedSetsTreeBehavior for build array from creocoder nested sets behavior and fancytree widget",
+    "description": "NestedSetsTreeBehavior for build array from creocoder nested sets behavior and my idea",
     "type": "yii2-extension",
     "keywords": ["yii2","extension","creocoder","behavior","nested sets","array","fancytree"],
     "license": "MIT",
