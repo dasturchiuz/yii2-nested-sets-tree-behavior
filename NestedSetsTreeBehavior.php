@@ -1,10 +1,11 @@
 <?php
 
-namespace dasturchiuz\treebehavior;
+namespace dasturchiuz\treebehaviorcategories;
 
 use yii\base\Behavior;
+use common\models\home\models\Organizations;
 
-class NestedSetsTreeBehavior extends Behavior
+class NestedSetsTreeCategoriesBehavior extends Behavior
 {
     /**
      * @var string
@@ -43,7 +44,7 @@ class NestedSetsTreeBehavior extends Behavior
      */
     public $makeLinkCallable = null;
 
-    public function treeCategory()
+    public function treeCategories()
     {
         $makeNode = function ($node) {
             $newData = [
@@ -72,7 +73,21 @@ class NestedSetsTreeBehavior extends Behavior
             foreach ($collection as $node) {
                 $item = $node;
                 $item[$this->childrenOutAttribute] = array();
-
+                $orgRecklama = [];
+                if ($item['selectOrg'] != null) {
+                    $d = json_decode($item['selectOrg']);
+                    if (is_array($d)) {
+                        foreach ($d as $it) {
+                            $org = Organizations::find()->where(['id' => $it])->one();
+                            $orgRecklama[] = [
+                                'id' => $org->id,
+                                'name' => $org->brand_name_org,
+                                'img' => $org->logo_url != null ? \Yii::getAlias('@storageUrl/source') . $org->logo_url : null
+                            ];
+                        }
+                        //$orgRecklama = exclude($item['selectOrg'], ',');
+                    }
+                }
                 // Number of stack items
                 $l = count($stack);
 
@@ -91,13 +106,14 @@ class NestedSetsTreeBehavior extends Behavior
                         'depth' => (int) $item['depth'],
                         'name' => $item['translation']['name'],
                         'description' => $item['translation']['description'],
+                        'selectionOrgonisation' => $orgRecklama,
                         'config' => $item['config'],
-                        'cat_img' => $item['base_url'].$item['cat_img'],
+                        'cat_img' => !empty($item['cat_img']) ? \Yii::getAlias('@storageUrl/source') . $item['cat_img'] : '',
                         'status' => (int) $item['status'],
                         'tree' => (int) $item['tree'],
                         'lft' => (int) $item['lft'],
                         'rgt' => (int) $item['rgt'],
-                        'depth' => (int) $item['depth'],
+
                         'children' => $item['children'],
                     ];
                     $stack[] = &$trees[$i];
@@ -111,12 +127,13 @@ class NestedSetsTreeBehavior extends Behavior
                         'name' => $item['translation']['name'],
                         'description' => $item['translation']['description'],
                         'config' => $item['config'],
-                        'cat_img' => $item['base_url'].$item['cat_img'],
+                        'cat_img' => !empty($item['cat_img']) ? \Yii::getAlias('@storageUrl/source') . $item['cat_img'] : '',
+
                         'status' => (int) $item['status'],
                         'tree' => (int) $item['tree'],
                         'lft' => (int) $item['lft'],
                         'rgt' => (int) $item['rgt'],
-                        'depth' => (int) $item['depth'],
+                        'selectionOrgonisation' => $orgRecklama,
                         'children' => $item['children'],
                     ];
                     $stack[] = &$stack[$l - 1][$this->childrenOutAttribute][$i];
